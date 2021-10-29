@@ -10,7 +10,8 @@ namespace Html_Parser
             string code = startProgram();
             //System.Console.WriteLine(code);
             IGeneralServices _generalServices = new GeneralServices();
-            _generalServices.Parser(code);
+            _generalServices.parser(code);
+            _generalServices.Show();
 
         }
         static string startProgram()
