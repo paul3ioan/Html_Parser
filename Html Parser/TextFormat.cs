@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Html_Parser
 {
-    public class TextFormat
+    public class TextFormat :ITextFormat
     {
         private string text;
         private int position = 0;
@@ -40,6 +40,10 @@ namespace Html_Parser
         {
             return text.Substring(position,  end - position + 1).Trim();
         }
+        public string GetContextToEnd()
+        {
+            return text.Substring(position, text.Length - position).Trim();
+        }
         public char GetElementAt()
         {
             return text[position];
@@ -64,6 +68,19 @@ namespace Html_Parser
             {
                 MoveOnce();
             }
+        }
+        public int FindNextApostrophe()
+        {
+            return text.IndexOf('"', position + 1);
+        }
+        public int FindNextSpace()
+        {
+            return text.IndexOf(' ', position + 1);
+        }
+        public void StartEncodingSelectors(string s)
+        {
+            text = s;
+            position = 0;
         }
         public void checkForDOCTYPE()
         {

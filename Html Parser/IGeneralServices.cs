@@ -8,7 +8,7 @@ namespace Html_Parser
 {
     public interface IGeneralServices
     {
-        public void Parser(string input);
+       
         public void parser(string input);
         public void Show();
     }

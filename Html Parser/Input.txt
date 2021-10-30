@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html class = "Dada">
+<html lang = "en" class = "Dada hah active">
    <head>
       <link>
    </head>

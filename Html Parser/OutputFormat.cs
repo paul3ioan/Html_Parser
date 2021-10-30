@@ -24,6 +24,7 @@ namespace Html_Parser
             var name = info.Item1;
             if (name == "text")
             {
+                // if it s an text element
                 string tabs = new String(' ', numberTabs);
                 if(!(output.Last() == '>'))
                 stringBuilder.Append($"{tabs}");
@@ -36,7 +37,7 @@ namespace Html_Parser
             {
                 
                 string tabs = new String(' ', numberTabs);
-                numberTabs-=2;
+               
                 if (stringBuilder.Length != 0 &&stringBuilder[stringBuilder.Length - 1] == '>')
                     stringBuilder.Append('\n');
                 stringBuilder.Append($"{tabs}<{name}>");
@@ -57,6 +58,7 @@ namespace Html_Parser
             if(info.Item2)
             {
                 string tabs;
+                numberTabs -= 2;
                 if (CheckLastTag(name))
                 {
                     output = output.Substring(0, output.Length - 1);
@@ -69,7 +71,7 @@ namespace Html_Parser
                 }
                     stringBuilder.Append('\n');
                 output += stringBuilder.ToString();
-                numberTabs-=2;
+                
             }
             else
             {
@@ -91,6 +93,7 @@ namespace Html_Parser
         private bool CheckLastTag(string name)
         {
             name = new string(name.ToCharArray().Reverse().ToArray());
+            if (name.Contains('\n')) return false;
             string work = new string(output.ToCharArray()
                 .Reverse().ToArray());            
             var start = work.IndexOf('>');
