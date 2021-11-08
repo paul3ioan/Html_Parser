@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Html_Parser
+﻿namespace Html_Parser
 {
     public interface ITextFormat
     {
@@ -22,7 +16,7 @@ namespace Html_Parser
         public int FindNextApostrophe();
         public int FindNextSpace();
         public void StartEncodingSelectors(string s);
-        public void checkForDOCTYPE();
+        public void CheckForDOCTYPE();
 
 
 

@@ -12,5 +12,6 @@ namespace Html_Parser
         public bool ElementsToWrite();
         public void CreateTextElement(string fullContext);
         public void CreateElement(string fullTag);
+        public (string, bool, bool, bool, string, bool) ConvertElement();
     }
 }

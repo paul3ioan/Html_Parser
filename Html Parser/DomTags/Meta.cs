@@ -1,19 +1,15 @@
 ﻿
-
 namespace Html_Parser.DomTags
 {
-    public class Body:Element
+    public class Meta : Element
     {
-    
-        public Body(string atributes)
+        public Meta(string atributes)
         {
-            Name = Tag.body;
+            Name = Tag.meta;
             Attributes = atributes;
+            Closed = true;
             FindSelectors(atributes);
-            
+          
         }
-
-  
     }
 }
-

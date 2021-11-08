@@ -8,19 +8,18 @@ namespace Html_Parser
 {
     public class GeneralServices : IGeneralServices
     {
+        private readonly ITextFormat _textFormat = new TextFormat();
+        private readonly OutputFormat _outputFormat = new OutputFormat();
+        private readonly IDomManipulation _domManipulation = new DomManipulation() ;
         
-        private ITextFormat _textFormat = new TextFormat();
-        private OutputFormat _outputFormat = new OutputFormat();
-        private DomManipulation _domManipulation = new DomManipulation();
-        
-        public void parser(string input)
+        public void Parser(string input)
         {
             _textFormat.StartParser(input);
-            _textFormat.checkForDOCTYPE();
+            _textFormat.CheckForDOCTYPE();
             if(_textFormat.IsDOCTYPE())
             {
                 _textFormat.MoveSubstring("<!DOCTYPE html>".Length - 1);
-                var ch = _textFormat.GetElementAt();
+               
             }
             while(!_textFormat.IsEnd())
             {
@@ -30,8 +29,14 @@ namespace Html_Parser
                 {
                     var idx = _textFormat.FindNextCloseTag();
                     var tag = _textFormat.GetContext(idx);
-                    _domManipulation.CreateElement(tag);
-                    _textFormat.MoveSubstring(tag.Count() - 1);
+                    if(tag[1] == '!')
+                    {
+                        //if it's a comment
+                        _domManipulation.CreateTextElement(tag);
+                    }
+                    else
+                        _domManipulation.CreateElement(tag);
+                    _textFormat.MoveSubstring(tag.Length - 1);
                 }
                 else if (nowChar != ' ')
                 {
@@ -40,13 +45,13 @@ namespace Html_Parser
                     var idx = _textFormat.FindNextOpeningTag();
                     var tag = _textFormat.GetContext(idx);
                     _domManipulation.CreateTextElement(tag);
-                    _textFormat.MoveSubstring(tag.Count() - 2);
+                    _textFormat.MoveSubstring(tag.Length - 2);
                 }
                 else _textFormat.MoveOnce();
             }
             
         }
-        public void Show()
+        public string Show()
         {
 
             _domManipulation.StartSerialization();
@@ -56,7 +61,9 @@ namespace Html_Parser
                 var information = _domManipulation.ConvertElement();
                 _outputFormat.WriteInFile(information);
             }
+            _outputFormat.TrimEnd();
             _outputFormat.Write();
+            return _outputFormat.ShowOutput();
         }
     }
 }

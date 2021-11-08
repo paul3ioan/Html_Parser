@@ -1,14 +1,13 @@
 ﻿namespace Html_Parser.DomTags
 {
-    public class Div:Element
+    public class Title:Element
     {
-       
-        public Div(string atributes)
+        public Title(string atributes)
         {
-            Name = Tag.div;
+            Name = Tag.title;
             Attributes = atributes;
+            WithoutSpace = true;
             FindSelectors(atributes);
         }
     }
 }
-

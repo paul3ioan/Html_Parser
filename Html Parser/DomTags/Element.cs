@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Html_Parser
 {
     public enum Tag
     {
+       Default,
        html,
        text,
        p,
@@ -16,103 +14,77 @@ namespace Html_Parser
        img,
        comment,
        body,
+       main,
+       span,
+       strong,
        div,
+       ul,
+       li,
        head,
        br,
        link,
        button, 
-       input
-    }
+       input,
+       form,
+       nav, 
+       article,
+       aside,
+       footer,
+       meta,
+       title,
+       header
+    } //name of tags
 
-    public enum BasicSelectors
-    {
-       Class,
-       id
-    }
+
     public class Element
-    {
+    {   
         public Tag Name { get; set; }
         public bool Closed { get; set; }
         public string rawContent = "";
+        public bool WithoutSpace = false;
         public string Attributes { get; set; }
-        public List<Element> Children = new List<Element>();
+        public List<Element> Children = new ();
         public bool closingMotion = false;
         public bool Special = false;
-        public List<string> personalSelectors = new List<string>();
-        public Dictionary<string, List<string>> Selectors = new Dictionary<string, List<string>>();
-        public virtual void CreateSelectors(Dictionary<string, List<string>> select) { }
-        public Dictionary<string, List<string>> FindSelectors(string s)
-        {
-            Dictionary<string, List<string>> aux = new Dictionary<string, List<string>>();
+        public Dictionary<string, List<string>> Selectors = new ();
+        public void FindSelectors(string s)
+        {  
             if (s == "")
-                return null;
+                return ;
             ITextFormat textFormat = new TextFormat();
             textFormat.StartEncodingSelectors(s);
             while(!textFormat.IsEnd())
             {
-                textFormat.SkipSpaces();
-                char currentChar = textFormat.GetElementAt(); // get the first char of a selector
+                textFormat.SkipSpaces();  
                 int finalPosSelector = textFormat.FindNextApostrophe();
                 if (finalPosSelector == -1) break;
                 string Selector = textFormat.GetContext(finalPosSelector); // Selector type class = "
-                textFormat.MoveSubstring(Selector.Length - 2);
-                Selector = Selector.Substring(0, Selector.Length - 4);
+                textFormat.MoveSubstring(Selector.Length - 1);
+                Selector = Selector.Substring(0, Selector.Length - 2);
                 // now finalPosSelector is the beggining of Selector's characteristics
                 // but first we need to move in the textformat over the seletor
                 
                 int finalPosCharact = textFormat.FindNextApostrophe();
                 string characteristics = textFormat.GetContext(finalPosCharact);
                 textFormat.MoveSubstring(characteristics.Length - 1);
-                characteristics = characteristics.Substring(1, characteristics.Length - 2);
+                characteristics = characteristics.Substring(0, characteristics.Length - 1);
                 List<string> chract = SubstractCharact(characteristics);
-                if (SelectorIsBasic(Selector)) 
-                    Selectors.Add(Selector, chract);
-                else
-                    aux.Add(Selector, chract);
+                Selectors.Add(Selector, chract);
+            
             }
-            return aux;
-        }
-        protected bool SelectorIsPersonal(string selector)
-        {
-            foreach (var personalSelector in personalSelectors)
-            {
-                if (personalSelector == selector)
-                {
-                    return true;
-
-                }
-            }
-            return false;
-        }
-        private bool SelectorIsBasic(string selector)
-        {
-            foreach (var basicSelector in Enum.GetValues(typeof(BasicSelectors)).Cast<BasicSelectors>().ToList())
-            {
-                if (basicSelector == BasicSelectors.Class)
-                {
-                    if (selector == "class")
-                    {
-                        return true;
-                    }
-
-                }
-                if (basicSelector.ToString() == selector)
-                {
-                    return true;
-                }
-            }
-            return false;
+            
         }
         private List<string> SubstractCharact(string s)
         {
-            List<string> charact = new List<string>();
+            // this function takes the string of attributes and put them on a list
+            // a split was easier 
+            List<string> charact = new();
             ITextFormat textFormat = new TextFormat();
             textFormat.StartEncodingSelectors(s);
             
             while(!textFormat.IsEnd())
             {
-                textFormat.SkipSpaces();
-                char current = textFormat.GetElementAt();
+                textFormat.SkipSpaces(); 
                 int idx = textFormat.FindNextSpace();
                 if(idx == -1)
                 {
@@ -122,7 +94,7 @@ namespace Html_Parser
                     continue;
                 }
                 string characterr = textFormat.GetContext(idx);
-                characterr = characterr.Substring(0, characterr.Length - 1);
+                characterr = characterr.Substring(0, characterr.Length);
                 charact.Add(characterr);
                 textFormat.MoveSubstring(characterr.Length);
             }

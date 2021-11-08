@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Html_Parser
 {
@@ -10,9 +6,9 @@ namespace Html_Parser
     {
         private string text;
         private int position = 0;
-        private readonly List<char> spaces = new List<char>()
+        private readonly List<char> spaces = new ()
         {
-            ' ', '\n','\t'
+            ' ', '\n','\t','\r'
         };
         private bool DOCTYPE = false;
         public void MoveOnce()
@@ -52,7 +48,7 @@ namespace Html_Parser
         {
             position = 0;
             text = input;
-            checkForDOCTYPE();
+            CheckForDOCTYPE();
         }
         public bool IsEnd()
         {
@@ -82,7 +78,7 @@ namespace Html_Parser
             text = s;
             position = 0;
         }
-        public void checkForDOCTYPE()
+        public void CheckForDOCTYPE()
         {
             DOCTYPE = text.Contains("<!DOCTYPE html>");
         }
