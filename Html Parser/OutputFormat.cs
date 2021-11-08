@@ -8,7 +8,7 @@ namespace Html_Parser
 {
     public class OutputFormat
     {
-        private int numberTabs = 0;
+        
         private string output = "";
         public string ShowOutput()
         {
@@ -26,114 +26,44 @@ namespace Html_Parser
             if(isDOC)
                 output +="<!DOCTYPE html>\r\n";
         }
-        public void WriteInFile((string,bool,bool,bool,string, bool) info)
+        public void WriteInFile((string, bool, bool, bool, string, bool) info)
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            if (info.Item1 == "")
-                return;
-            var name = info.Item1;
-          
-            if (name == "text")
+            string NameTag = info.Item1;
+            bool IsClosing = info.Item2;
+            bool ClosedTag = info.Item3;
+            //bool IsSpecial = info.Item4;
+            string Attributes = info.Item5;
+            //bool WithoutSpaces = info.Item6;
+            if (NameTag == "text")
+                AddText(Attributes);
+            else if(ClosedTag)
             {
-                // if it s an text element
-                string tabs = new String(' ', numberTabs);
-                if(!(output.Last() == '>'))
-                stringBuilder.Append($"{tabs}");
-                stringBuilder.Append(info.Item5);
-                //stringBuilder.Append('\r');
-                //stringBuilder.Append('\n');
-                output +=(stringBuilder.ToString());
-            }
-            else
-            if(info.Item6)
-            {
-                if(info.Item2)
+                if (Attributes == "")
                 {
-                    if (CheckIfLastTagIsClosedOrEqual(name))
-                    {
-                        output += $"</{name}>";
-                    }
-                    else output += $"</{name}>";
-                    numberTabs -= 3;
+                    output += $"<{NameTag}>";
                 }
                 else
-                {
-                    AddStartingTag(info);
-                }
-            }  
-            else 
-            if(info.Item3)
-            {
-                
-                string tabs = new String(' ', numberTabs);
-               
-               // if (stringBuilder.Length != 0 &&stringBuilder[stringBuilder.Length - 1] == '>')
-                 //   stringBuilder.Append('\r','\n');
-                if(info.Item5 !="")
-                    stringBuilder.Append($"{tabs}<{name} {info.Item5}>");
-                else
-                    stringBuilder.Append($"{tabs}<{name}>");
-               // stringBuilder.Append('\r');
-              //  stringBuilder.Append('\n');
-                output +=(stringBuilder.ToString());
+                    output += $"<{NameTag} {Attributes}>";
             }
             else
-            if(info.Item4)
-            {
-                stringBuilder.Append($"</{name}>");
-                if (output.Last() == '\n')
-                {
-                    output = output.Substring(0, output.Length - 2);
-                }
-                output +=(stringBuilder.ToString());
+            if(!IsClosing)
+            {           
+                StringBuilder str = new();
+                if (Attributes != "")
+                    str.Append($"<{NameTag} {Attributes}>");
+                else
+                    str.Append($"<{NameTag}>");
+                output += str;
             }
             else
-            if(info.Item2)
             {
-                string tabs;
-                numberTabs -= 3;
-                if (CheckLastTag(name))
-                {
-                    output = output.Substring(0, output.Length - 2);
-                    stringBuilder.Append($"</{name}>");
-                }
-                else
-                {
-                    tabs = new String(' ', numberTabs);
-                    stringBuilder.Append($"{tabs}</{name}>");
-                }
-               // stringBuilder.Append('\r');
-               // stringBuilder.Append('\n');
-                output += stringBuilder.ToString();
-                
+                output += $"</{NameTag}>";
             }
-            else      
-            {
-                AddStartingTag(info);
-            }
-           
+
         }
-        private void AddStartingTag((string, bool, bool, bool, string, bool) info)
+        private void AddText(string content)
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            var name = info.Item1;
-            string tabs = new String(' ', numberTabs);
-
-            stringBuilder.Append($"{tabs}");
-            if (info.Item5 != "")
-                stringBuilder.Append($"<{name} {info.Item5}>");
-            else
-                stringBuilder.Append($"<{name}>");
-
-            if (stringBuilder[stringBuilder.Length - 1] == '>')
-            {
-               // stringBuilder.Append('\r');
-            //stringBuilder.Append('\n');
-            }
-
-            output += stringBuilder.ToString();
-
-            numberTabs += 3;
+            output += content;
         }
         private bool CheckIfLastTagIsClosedOrEqual(string name)
         {

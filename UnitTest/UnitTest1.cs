@@ -8,29 +8,29 @@ namespace UnitTest
     [TestClass]
     public class UnitTest1
     {
-        public static string mainString;
+        public static string mainString, text;
         [TestMethod]
         public void TestMethod1()
         {
             
-            string code = startProgram();
+            startProgram();
             //System.Console.WriteLine(code);
-            IGeneralServices _generalServices = new GeneralServices(mainString);
-            _generalServices.parser(code);
+            IGeneralServices _generalServices = new GeneralServices();
+            _generalServices.Parser(mainString);
             string output = _generalServices.Show();
             output = BeautifyText(output);
             Assert.AreEqual(mainString, output);
         }
-        static string startProgram()
+        static void startProgram()
         {
            
             mainString = System.IO.File.ReadAllText("../../../input.txt");
             mainString = BeautifyText(mainString);
-            string text = System.IO.File.ReadAllText("../../../input.txt")
+            text = System.IO.File.ReadAllText("../../../input.txt")
                 .Replace(Environment.NewLine, "");
+
             /// transform the input in a single line
-            
-            return text;
+   
 
         }
         public static string BeautifyText(string input)
